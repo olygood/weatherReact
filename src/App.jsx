@@ -2,12 +2,12 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import Weather from '../src/assets/components/weather.jsx'
+import Weather from './assets/components/Weather'
 function App() {
  
 
   return (
-    <div className='containerP'>
+    <div className='container-main'>
     <Weather />
 
     </div>
