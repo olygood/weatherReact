@@ -43,12 +43,7 @@
   height: 100%;
 }
 /* Contenu */
-.container-weather h1 {
-  /* font-size: 2rem; */
-  /* line-height: 1.1; */
-  color: rgb(218, 95, 95);
-  /* margin-bottom: 100px; */
-}
+
 .city-name {
   font-size: 45px;
   font-family: "Lato", sans-serif;

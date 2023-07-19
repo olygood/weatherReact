@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import "./Weather.css";
 import imgLoader from "../img/loader.svg";
+import browser from "/img/browser.svg";
 // import icons from "../img/icons/03n.svg";
 
 const APIKEY = import.meta.env.VITE_WEATHER_API_KEY;
@@ -9,15 +10,22 @@ const APIKEY = import.meta.env.VITE_WEATHER_API_KEY;
 const apikey = "1212a454-8fac-46c6-9690-fe3dbc671616";
 const Weather = () => {
   const [weatherData, setWeatherData] = useState(null);
+  const [errorInfo, setErrorInfo] = useState(null);
+
   useEffect(() => {
     fetch(`http://api.airvisual.com/v2/nearest_city?key=${apikey}`)
       .then((response) => {
         console.log(response);
+        //400 - 499 : erreur client,
+        //500 - 599 : erreur serveur
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
         return response.json();
       })
-      .then((data) => {
-        console.log(data);
 
+      .then((data) => {
         setWeatherData({
           city: data.data.city,
           country: data.data.country,
@@ -26,13 +34,22 @@ const Weather = () => {
           humidity: data.data.current.weather.hu,
           wind: data.data.current.weather.ws,
         });
+      })
+      .catch((err) => {
+        console.log(err);
+        console.dir(err);
+        setErrorInfo(err.message);
       });
   }, []);
 
   return (
-  // container principal 
+    // container principal
     <div className="container-weather">
-      <div className={`container-img-loader ${!weatherData && "active"}`}>
+      <div
+        className={`container-img-loader ${
+          !weatherData && !errorInfo && "active"
+        }`}
+      >
         <img src={imgLoader} alt="img" className="img-loader" />
       </div>
       {weatherData && (
@@ -40,7 +57,7 @@ const Weather = () => {
           <p className="city-name">{weatherData.city}</p>
           <p className="country-name">{weatherData.country}</p>
 
-{/* card humidité temperature vent */}
+          {/* card humidité temperature vent */}
           <div className="container-weather-info">
             <div className="card-weather">
               <p>Humidité</p>
@@ -60,14 +77,14 @@ const Weather = () => {
             </div>
 
             <div className="card-weather">
-              <p >Vent</p>
+              <p>Vent</p>
               <div className="card-compo">
                 <p>km/h</p>
                 <p className="wind">{weatherData.wind}</p>
               </div>
             </div>
           </div>
-{/* container de l'image SVG */}
+          {/* container de l'image SVG */}
           <div className="container-icons">
             <img
               // src={import.meta.env.BASE_URL + "public/icons/09n.svg"}
@@ -75,6 +92,12 @@ const Weather = () => {
               alt="weather icon"
             />
           </div>
+        </>
+      )}
+      {errorInfo && !weatherData && (
+        <>
+          <p className="error-info">{errorInfo}</p>
+          <img src={browser} alt="icon-error" />
         </>
       )}
     </div>
